@@ -48,7 +48,7 @@ class ParentOnboardingUser(AbstractBaseUser, PermissionsMixin, CommonTimePicker)
         return f'{self.user_type}_{self.name}_{self.email}'
 
 class Child(CommonTimePicker):
-    parent = models.ForeignKey(ParentOnboardingUser, on_delete=models.CASCADE, related_name='children')
+    parent = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='children')
     name = models.CharField(max_length=255)
     age_in_months = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(240)])
     gender_choices = (
@@ -71,7 +71,7 @@ class Blog(CommonTimePicker):
     title = models.CharField(max_length=255)
     content = models.TextField()
     categories = models.ManyToManyField(BlogCategory, related_name='blogs')
-    parent_types = models.ManyToManyField(ParentOnboardingUser, related_name='blogs', blank=True)
+    parent_types = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='blogs', blank=True)
     age_group_start = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(240)])
     age_group_end = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(240)])
     gender_specific = models.CharField(max_length=10, choices=Child.gender_choices, blank=True, null=True)
