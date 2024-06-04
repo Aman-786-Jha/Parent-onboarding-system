@@ -6,6 +6,7 @@ from rest_framework_simplejwt.views import (
 
 from .views import *
 
+
 urlpatterns = [
     #----------------Parent------------------#
     path('parent-create/', ParentOnboardingUserSignupView.as_view(), name='register'),
