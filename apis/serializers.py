@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+
 class ParentOnboardingUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
