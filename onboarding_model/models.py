@@ -75,7 +75,7 @@ class Blog(CommonTimePicker):
     age_group_start = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(240)])
     age_group_end = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(240)])
     gender_specific = models.CharField(max_length=10, choices=Child.gender_choices, blank=True, null=True)
-    geolocation = models.CharField(max_length=255, blank=True, null=True) # Optional geolocation filter
+    geolocation = models.CharField(max_length=255, blank=True, null=True, default = None) # Optional geolocation filter
 
     def __str__(self):
         return self.title
