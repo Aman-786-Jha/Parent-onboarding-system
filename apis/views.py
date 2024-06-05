@@ -332,8 +332,30 @@ class BlogDetailView(APIView):
 
     @swagger_auto_schema(
         responses={
-            200: 'OK',
-            404: 'Not Found',
+            200: openapi.Response(
+                description='OK',
+                schema=BlogSerializer
+            ),
+            400: openapi.Response(
+                description='Bad Request',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT)
+            ),
+            401: openapi.Response(
+                description='Unauthorized',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT)
+            ),
+            403: openapi.Response(
+                description='Forbidden',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT)
+            ),
+            404: openapi.Response(
+                description='Not Found',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT)
+            ),
+            500: openapi.Response(
+                description='Internal Server Error',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT)
+            ),
         },
         manual_parameters=[
             openapi.Parameter(
@@ -367,6 +389,121 @@ class BlogDetailView(APIView):
                 },
                 status=status.HTTP_404_NOT_FOUND
             )
+
+    @swagger_auto_schema(
+        request_body=BlogSerializer,
+        responses={
+            200: openapi.Response(
+                description='OK',
+                schema=BlogSerializer
+            ),
+            400: openapi.Response(
+                description='Bad Request',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT)
+            ),
+            404: openapi.Response(
+                description='Not Found',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT)
+            ),
+            500: openapi.Response(
+                description='Internal Server Error',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT)
+            ),
+        },
+        manual_parameters=[
+            openapi.Parameter(
+                name='Authorization',
+                in_=openapi.IN_HEADER,
+                type=openapi.TYPE_STRING,
+                required=True,
+                default='Bearer ',
+                description='Token',
+            ),
+        ]
+    )
+    def put(self, request, pk):
+        try:
+            blog = get_object_or_404(Blog, id=pk)
+            serializer = BlogSerializer(blog, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {
+                        'responseCode': status.HTTP_200_OK,
+                        'responseMessage': 'Blog updated successfully.',
+                        'responseData': serializer.data,
+                    },
+                    status=status.HTTP_200_OK
+                )
+            return Response(
+                {
+                    'responseCode': status.HTTP_400_BAD_REQUEST,
+                    'responseMessage': 'Bad Request',
+                    'responseData': serializer.errors,
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            print("BlogDetailView Error -->", e)
+            return Response(
+                {
+                    'responseCode': status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    'responseMessage': 'Something went wrong! Please try again.',
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Response(
+                description='OK',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT)
+            ),
+            400: openapi.Response(
+                description='Bad Request',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT)
+            ),
+            404: openapi.Response(
+                description='Not Found',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT)
+            ),
+            500: openapi.Response(
+                description='Internal Server Error',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT)
+            ),
+        },
+        manual_parameters=[
+            openapi.Parameter(
+                name='Authorization',
+                in_=openapi.IN_HEADER,
+                type=openapi.TYPE_STRING,
+                required=True,
+                default='Bearer ',
+                description='Token',
+            ),
+        ]
+    )
+    def delete(self, request, pk):
+        try:
+            blog = get_object_or_404(Blog, id=pk)
+            blog.delete()
+            return Response(
+                {
+                    'responseCode': status.HTTP_200_OK,
+                    'responseMessage': 'Blog deleted successfully.',
+                },
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            print("BlogDetailView Error -->", e)
+            return Response(
+                {
+                    'responseCode': status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    'responseMessage': 'Something went wrong! Please try again.',
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 from django.shortcuts import get_object_or_404
 
 class BlogCategoryListView(APIView):
